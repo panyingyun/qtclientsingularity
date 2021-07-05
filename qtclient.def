@@ -1,0 +1,69 @@
+# qtclient.def
+
+BootStrap: docker
+From: ubuntu:20.04
+
+%labels
+    Author panyingyun
+    Version qtclient 0.1
+
+# run、entrypoint 执行的命令
+%runscript
+    exec /usr/local/bin/qtclient
+
+# 从宿主机实现文件拷贝到容器镜像目标路径中
+%files
+    ./qtclient /opt
+
+# post之后执行的环境变量与操作
+%environment
+    export LANG="zh_CN.UTF-8"
+    export LANGUAGE="zh_CN:zh:en_US:en"
+
+# 安装依赖
+%post
+    echo "Basic Configuration of Ubuntu 20.04"
+
+    # Replace Official Repository with 163 Repository (in China needed)
+    sed -i 's/archive.ubuntu.com/mirrors.huaweicloud.com/g' /etc/apt/sources.list
+    sed -i 's/security.ubuntu.com/mirrors.huaweicloud.com/g' /etc/apt/sources.list
+    apt update
+
+    echo "Install desktop and xcb"
+    export DEBIAN_FRONTEND=noninteractive
+    apt install -y build-essential wget zlib1g-dev vim  gfortran g++ gcc make cmake \
+        qt5-default qtcreator libqt5x11extras5-dev libgl1-mesa-dev libx11-dev \
+        libfontconfig1-dev libfreetype6-dev libx11-dev mesa-common-dev \
+        libglu1-mesa-dev freeglut3-dev libxcb-keysyms1-dev libxcb-image0-dev \
+        libxcb-shm0-dev libxcb-icccm4-dev libxcb-sync0-dev libxcb-xfixes0-dev \
+        libxcb-shape0-dev libxcb-randr0-dev libxcb-render-util0-dev \
+        libfontconfig1-dev libfreetype6-dev libx11-dev libxext-dev \
+        libxfixes-dev libxi-dev libxrender-dev libxcb1-dev libx11-xcb-dev libxcb-glx0-dev x11vnc \
+        xauth build-essential mesa-common-dev libglu1-mesa-dev libxkbcommon-dev \
+        libxcb-xkb-dev libxslt1-dev libxkbcommon-x11-0 freeglut3-dev
+    apt install -y ubuntu-desktop
+   
+    echo "Asia/Shanghai" > /etc/timezone
+    dpkg-reconfigure -f noninteractive tzdata
+
+    apt install -y language-pack-zh-han* language-pack-gnome-zh-han*
+    apt install -y $(check-language-support)
+    apt remove thunderbird rhythmbox firefox libreoffice* -y
+    
+    export LANG="zh_CN.UTF-8"
+    export LANGUAGE="zh_CN:zh:en_US:en"
+
+    echo "Install qtclient"
+    cd /opt/qtclient && sh auto_build_linux.sh && cp build/qtclient /usr/local/bin/
+    chmod 755 /usr/local/bin/qtclient
+    
+    echo "Clean files"
+    rm -rf /opt/qtclient
+    
+    echo "qtclient install successful."
+%help
+    singularity run-help qtclient.sif
+    use-
+    singularity exec qtclient.sif [command] [params]
+    example-
+    singularity exec qtclient.sif
