@@ -29,27 +29,25 @@ From: ubuntu:20.04
     sed -i 's/security.ubuntu.com/mirrors.huaweicloud.com/g' /etc/apt/sources.list
     apt update
 
-    echo "Install desktop and xcb"
     export DEBIAN_FRONTEND=noninteractive
-    apt install -y build-essential wget zlib1g-dev vim  gfortran g++ gcc make cmake \
-        qt5-default qtcreator libqt5x11extras5-dev libgl1-mesa-dev libx11-dev \
-        libfontconfig1-dev libfreetype6-dev libx11-dev mesa-common-dev \
-        libglu1-mesa-dev freeglut3-dev libxcb-keysyms1-dev libxcb-image0-dev \
-        libxcb-shm0-dev libxcb-icccm4-dev libxcb-sync0-dev libxcb-xfixes0-dev \
-        libxcb-shape0-dev libxcb-randr0-dev libxcb-render-util0-dev \
-        libfontconfig1-dev libfreetype6-dev libx11-dev libxext-dev \
-        libxfixes-dev libxi-dev libxrender-dev libxcb1-dev libx11-xcb-dev libxcb-glx0-dev x11vnc \
-        xauth build-essential mesa-common-dev libglu1-mesa-dev libxkbcommon-dev \
-        libxcb-xkb-dev libxslt1-dev libxkbcommon-x11-0 freeglut3-dev
-    apt install -y ubuntu-desktop
-   
+    
+    # Install Base System Utilities
+    apt install -y vim curl wget git net-tools build-essential cmake tzdata
+
+    # Install X11 and OpenGL Related
+    apt install -y libgl1-mesa-dev mesa-common-dev libx11-dev libxt-dev
+
+    # Install Qt Library
+    apt install -y qt5-default qtcreator libqt5x11extras5-dev libqt5charts5-dev
+
+    # Installl zh font 
     echo "Asia/Shanghai" > /etc/timezone
     dpkg-reconfigure -f noninteractive tzdata
 
     apt install -y language-pack-zh-han* language-pack-gnome-zh-han*
     apt install -y $(check-language-support)
-    apt remove thunderbird rhythmbox firefox libreoffice* -y
-    
+    locale-gen
+
     export LANG="zh_CN.UTF-8"
     export LANGUAGE="zh_CN:zh:en_US:en"
 
