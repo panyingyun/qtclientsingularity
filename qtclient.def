@@ -1,7 +1,7 @@
 # qtclient.def
 
 BootStrap: docker
-From: ubuntu:20.04
+From: ubuntu:22.04
 
 %labels
     Author panyingyun
@@ -22,7 +22,7 @@ From: ubuntu:20.04
 
 # 安装依赖
 %post
-    echo "Basic Configuration of Ubuntu 20.04"
+    echo "Basic Configuration of Ubuntu 22.04"
 
     # Replace Official Repository with 163 Repository (in China needed)
     sed -i 's/archive.ubuntu.com/mirrors.huaweicloud.com/g' /etc/apt/sources.list
@@ -38,7 +38,7 @@ From: ubuntu:20.04
     apt install -y libgl1-mesa-dev mesa-common-dev libx11-dev libxt-dev
 
     # Install Qt Library
-    apt install -y qt5-default qtcreator libqt5x11extras5-dev libqt5charts5-dev
+    apt install -y qtbase5-dev qtbase5-dev-tools qtchooser libqt5x11extras5-dev libqt5charts5-dev
 
     # Installl zh font 
     echo "Asia/Shanghai" > /etc/timezone
